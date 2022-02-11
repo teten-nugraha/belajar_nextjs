@@ -48,7 +48,7 @@ const getSingleRoom = async (req, res) => {
         const room = await Room.findById(req.query.id)
         
         if(!room) {
-            res.status(400).json({
+            res.status(404).json({
                 success: false,
                 error: 'Room not found with this ID'
             });
@@ -67,8 +67,40 @@ const getSingleRoom = async (req, res) => {
     }
 }
 
+const updateRoom = async (req, res) => {
+    try{
+
+        const room = await Room.findById(req.query.id)
+        
+        if(!room) {
+            res.status(404).json({
+                success: false,
+                error: 'Room not found with this ID'
+            });
+        }
+
+        let roomUpdated = await Room.findByIdAndUpdate(req.query.id, req.body, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false
+        })
+
+        res.status(200).json({
+            success: true,
+            roomUpdated
+        })
+
+    }catch(error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
 export {
     allRooms,
     newRoom,
-    getSingleRoom
+    getSingleRoom,
+    updateRoom
 }
